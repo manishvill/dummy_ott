@@ -1,1 +1,25 @@
-{"flutter":{"platforms":{"dart":{"lib/firebase_options.dart":{"projectId":"shubh-manish-dummy-ott-app","configurations":{"web":"1:1062398383196:web:7f55bb7d30096fb071c299"}}}}}}
+{
+  "flutter": {
+    "platforms": {
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "shubh-manish-dummy-ott-app",
+          "configurations": {
+            "web": "1:1062398383196:web:7f55bb7d30096fb071c299"
+          }
+        }
+      }
+    }
+  },
+  "hosting": {
+    "source": ".",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "frameworksBackend": {
+      "region": "asia-east1"
+    }
+  }
+}
