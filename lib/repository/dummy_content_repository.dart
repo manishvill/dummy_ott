@@ -14,7 +14,7 @@ class DummyContentRepository {
     // Action Movies
     ContentModel(
       id: '1',
-      title: 'Fast & Furious Legacy',
+      title: 'Fast & Furious',
       description:
           'High-octane action thriller featuring incredible car chases and death-defying stunts. Follow the crew as they embark on their most dangerous mission yet.',
       imageUrl: 'https://picsum.photos/seed/action1/400/600',
