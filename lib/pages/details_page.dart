@@ -24,6 +24,7 @@ class _DetailsPageState extends State<DetailsPage> {
     context.read<DetailsBloc>().add(LoadContentDetails(widget.content));
   }
 
+  @override
   Widget build(BuildContext context) {
     return BlocListener<DetailsBloc, DetailsState>(
       listener: (context, state) {
@@ -119,7 +120,7 @@ class _DetailsPageState extends State<DetailsPage> {
                         end: Alignment.bottomCenter,
                         colors: [
                           Colors.transparent,
-                          Colors.black.withOpacity(0.7),
+                          Colors.black.withValues(alpha: 0.7),
                         ],
                       ),
                     ),

@@ -602,7 +602,7 @@ class _ProfilePageState extends State<ProfilePage> {
               margin: const EdgeInsets.only(bottom: 8),
               decoration: BoxDecoration(
                 color: profile.subscriptionPlan == plan
-                    ? Colors.red.withOpacity(0.2)
+                    ? Colors.red.withValues(alpha: 0.2)
                     : Colors.black54,
                 borderRadius: BorderRadius.circular(8),
                 border: profile.subscriptionPlan == plan
@@ -632,7 +632,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 activeColor: Colors.red,
               ),
             );
-          }).toList(),
+          }),
         ],
       ),
     );
@@ -642,9 +642,9 @@ class _ProfilePageState extends State<ProfilePage> {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.red.withOpacity(0.1),
+        color: Colors.red.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.red.withOpacity(0.3)),
+        border: Border.all(color: Colors.red.withValues(alpha: 0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
