@@ -1,21 +1,19 @@
-# Code Generation Templates - POC Reference
+# Flutter BLoC Code Templates
 
-## Quick Templates Based on Your Codebase
+Use these exact templates when generating new features. DO NOT deviate from these patterns.
 
-### 1. New Feature Implementation Steps
+## New Feature Generation Rules
 
-#### Step 1: Create BLoC Files
-```bash
-# Create directory: lib/blocs/feature_name/
-# Files needed:
-- feature_name_bloc.dart
-- feature_name_event.dart  
-- feature_name_state.dart
-```
+1. ALWAYS create these 4 files in this order:
+   - lib/blocs/feature_name/feature_name_event.dart
+   - lib/blocs/feature_name/feature_name_state.dart  
+   - lib/blocs/feature_name/feature_name_bloc.dart
+   - lib/pages/feature_name_page.dart
 
-#### Step 2: Event Template
+2. ALWAYS replace "feature_name" and "FeatureName" with actual feature name
+
+## Template 1: Event File
 ```dart
-// lib/blocs/feature_name/feature_name_event.dart
 import 'package:equatable/equatable.dart';
 
 abstract class FeatureNameEvent extends Equatable {
@@ -32,7 +30,6 @@ class RefreshFeatureNameData extends FeatureNameEvent {
   const RefreshFeatureNameData();
 }
 
-// Add parameter events as needed
 class UpdateFeatureNameItem extends FeatureNameEvent {
   final String itemId;
   const UpdateFeatureNameItem(this.itemId);
@@ -41,11 +38,10 @@ class UpdateFeatureNameItem extends FeatureNameEvent {
 }
 ```
 
-#### Step 3: State Template
+## Template 2: State File  
 ```dart
-// lib/blocs/feature_name/feature_name_state.dart
 import 'package:equatable/equatable.dart';
-import '../../models/content_model.dart'; // Use existing models
+import '../../models/content_model.dart';
 
 abstract class FeatureNameState extends Equatable {
   const FeatureNameState();
@@ -62,27 +58,22 @@ class FeatureNameLoading extends FeatureNameState {
 }
 
 class FeatureNameLoaded extends FeatureNameState {
-  final List<ContentModel> data; // Reuse existing ContentModel
-  
+  final List<ContentModel> data;
   const FeatureNameLoaded({required this.data});
-  
   @override
   List<Object?> get props => [data];
 }
 
 class FeatureNameError extends FeatureNameState {
   final String message;
-  
   const FeatureNameError({required this.message});
-  
   @override
   List<Object?> get props => [message];
 }
 ```
 
-#### Step 4: BLoC Template
+## Template 3: BLoC File
 ```dart
-// lib/blocs/feature_name/feature_name_bloc.dart
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../repository/dummy_content_repository.dart';
 import 'feature_name_event.dart';
@@ -103,10 +94,7 @@ class FeatureNameBloc extends Bloc<FeatureNameEvent, FeatureNameState> {
   ) async {
     try {
       emit(const FeatureNameLoading());
-      
-      // Use existing repository methods
-      final data = await repository.getFeaturedContent(); // or appropriate method
-      
+      final data = await repository.getFeaturedContent();
       emit(FeatureNameLoaded(data: data));
     } catch (error) {
       emit(FeatureNameError(message: error.toString()));
@@ -129,9 +117,8 @@ class FeatureNameBloc extends Bloc<FeatureNameEvent, FeatureNameState> {
     UpdateFeatureNameItem event,
     Emitter<FeatureNameState> emit,
   ) async {
-    // Handle specific updates
     try {
-      // Implementation based on your needs
+      // Add your update logic here
     } catch (error) {
       emit(FeatureNameError(message: error.toString()));
     }
@@ -139,9 +126,8 @@ class FeatureNameBloc extends Bloc<FeatureNameEvent, FeatureNameState> {
 }
 ```
 
-#### Step 5: Page Template
+## Template 4: Page File
 ```dart
-// lib/pages/feature_name_page.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../blocs/feature_name/feature_name_bloc.dart';
@@ -249,41 +235,28 @@ class _FeatureNamePageState extends State<FeatureNamePage> {
 }
 ```
 
-## Integration in main.dart
+## Integration Rules
 
+ALWAYS add to main.dart MultiBlocProvider:
 ```dart
-// Add to your existing MultiBlocProvider in main.dart
 BlocProvider(
   create: (context) => FeatureNameBloc(
-    repository: DummyContentRepository(), // Use existing repository
+    repository: DummyContentRepository(),
   ),
 ),
 ```
 
-## Navigation Setup
-
+ALWAYS add route if using named navigation:
 ```dart
-// Add to your routes (if using named routes)
 '/feature_name': (context) => const FeatureNamePage(),
 ```
 
-## Quick Checklist for New Features
+## Generation Checklist
 
-✅ **File Structure**
-- [ ] Created `lib/blocs/feature_name/` directory
-- [ ] Added event, state, bloc files
-- [ ] Created page file
-
-✅ **Implementation**
-- [ ] Events extend Equatable
-- [ ] States extend Equatable  
-- [ ] BLoC uses existing repository
-- [ ] Error handling in all async methods
-- [ ] UI uses BlocBuilder
-
-✅ **Integration**
-- [ ] Added BlocProvider to main.dart
-- [ ] Added navigation route
-- [ ] Tested loading, success, and error states
-
-This template reuses your existing `ContentModel` and `DummyContentRepository`, ensuring consistency with your current codebase.
+When creating new feature, verify:
+- [ ] Created blocs/feature_name/ directory
+- [ ] All 4 files created with correct names
+- [ ] All classes extend Equatable  
+- [ ] All async methods have try-catch
+- [ ] All states handled in UI
+- [ ] Added to MultiBlocProvider in main.dart
