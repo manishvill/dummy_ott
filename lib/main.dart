@@ -1,3 +1,4 @@
+import 'package:dummy_ott_app/blocs/upcoming_movies/upcoming_movies_bloc.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -41,6 +42,9 @@ class OTTApp extends StatelessWidget {
         ),
         BlocProvider(
           create: (context) => CategoryBloc(repository: repository),
+        ),
+        BlocProvider(
+          create: (context) => UpcomingMoviesBloc(repository: repository),
         ),
         BlocProvider(
           create: (context) => ProfileBloc(),

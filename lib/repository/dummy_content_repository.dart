@@ -258,6 +258,12 @@ class DummyContentRepository {
     return _content.where((content) => content.isFeatured).toList();
   }
 
+  // Method to get upcoming movies (simulated)
+  Future<List<ContentModel>> getUpcomingMovies() async {
+    await _simulateNetworkDelay();
+    return _content.where((content) => !content.isFeatured).toList();
+  }
+
   Future<List<ContentModel>> getContentByCategory(String category) async {
     await _simulateNetworkDelay();
     return _content.where((content) => content.category == category).toList();

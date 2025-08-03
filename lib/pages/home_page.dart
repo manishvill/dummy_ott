@@ -1,3 +1,4 @@
+import 'package:dummy_ott_app/pages/upcoming_movies_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../blocs/home/home_bloc.dart';
@@ -40,6 +41,17 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Colors.black87,
         elevation: 0,
         actions: [
+          IconButton(
+            icon: const Icon(Icons.upcoming, color: Colors.white),
+            onPressed: () async {
+              await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const UpcomingMoviesPage(),
+                ),
+              );
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.category, color: Colors.white),
             onPressed: () async {
