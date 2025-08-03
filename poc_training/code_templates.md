@@ -153,8 +153,15 @@ class _FeatureNamePageState extends State<FeatureNamePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Feature Name'),
-        backgroundColor: Theme.of(context).colorScheme.primary,
+        title: const Text(
+          'Feature Name',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+        backgroundColor: Colors.black87,
+        elevation: 0,
       ),
       body: BlocBuilder<FeatureNameBloc, FeatureNameState>(
         builder: (context, state) {
@@ -235,6 +242,157 @@ class _FeatureNamePageState extends State<FeatureNamePage> {
 }
 ```
 
+## Template 5: Movie Listing Design Pattern
+
+**REQUIREMENT**: All movie/content listings MUST use the standardized horizontal scrolling card design with category headers and "See All" navigation.
+
+### Standard Category Section Template:
+```dart
+Widget _build{CategoryName}Section(String category, List<ContentModel> categoryContent) {
+  if (categoryContent.isEmpty) return const SizedBox.shrink();
+
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              '$category Movies',
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            GestureDetector(
+              onTap: () async {
+                await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => CategoryPage(
+                      selectedCategory: category,
+                    ),
+                  ),
+                );
+                _loadFeaturedContent();
+              },
+              child: const Text(
+                'See All',
+                style: TextStyle(
+                  color: Colors.red,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+      SizedBox(
+        height: 220,
+        child: ListView.builder(
+          scrollDirection: Axis.horizontal,
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          itemCount: categoryContent.length,
+          itemBuilder: (context, index) {
+            final item = categoryContent[index];
+            return GestureDetector(
+              onTap: () => _navigateToDetails(item),
+              child: Container(
+                width: 150,
+                margin: const EdgeInsets.only(right: 12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.3),
+                              blurRadius: 6,
+                              offset: const Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                        child: Image.network(
+                          item.imageUrl,
+                          height: 150,
+                          width: 150,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Container(
+                              height: 150,
+                              width: 150,
+                              color: Colors.grey[800],
+                              child: const Icon(
+                                Icons.movie,
+                                color: Colors.white54,
+                                size: 48,
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      item.title,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.star,
+                          color: Colors.amber,
+                          size: 14,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          item.rating.toString(),
+                          style: const TextStyle(
+                            color: Colors.white70,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        ),
+      ),
+    ],
+  );
+}
+```
+
+**DESIGN RULES**:
+- Method name: `_build{CategoryName}Section` (e.g., `_buildComedySection`, `_buildActionSection`)
+- Parameters: `String category, List<ContentModel> categoryContent`
+- Height: Exactly `220` pixels for the ListView
+- Item width: Exactly `150` pixels
+- Image dimensions: `150x150` pixels
+- Include star rating display with amber star icon
+- Include shadow on image container with `Colors.black.withValues(alpha: 0.3)`
+- Include "See All" navigation link in red color
+- Handle empty content with `SizedBox.shrink()`
+- Use horizontal scrolling ListView
+- Include proper error handling for network images
+
 ## Integration Rules
 
 ALWAYS add to main.dart MultiBlocProvider:
@@ -260,3 +418,6 @@ When creating new feature, verify:
 - [ ] All async methods have try-catch
 - [ ] All states handled in UI
 - [ ] Added to MultiBlocProvider in main.dart
+- [ ] Movie listings use `_build{CategoryName}Section` design pattern
+- [ ] Navigation includes "See All" links to category pages
+- [ ] Error handling includes fallback icons for failed image loads
