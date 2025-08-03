@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../blocs/upcoming_movies/upcoming_movies_bloc.dart';
 import '../blocs/upcoming_movies/upcoming_movies_event.dart';
 import '../blocs/upcoming_movies/upcoming_movies_state.dart';
-import '../models/content_model.dart';
+import '../models/content_model.dart'; // Assuming ContentModel is used for movie data
 
 class UpcomingMoviesPage extends StatefulWidget {
   const UpcomingMoviesPage({super.key});
@@ -16,93 +16,155 @@ class _UpcomingMoviesPageState extends State<UpcomingMoviesPage> {
   @override
   void initState() {
     super.initState();
+    // Dispatch the LoadUpcomingMovies event when the page is initialized
     context.read<UpcomingMoviesBloc>().add(const LoadUpcomingMovies());
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black,
       appBar: AppBar(
-        title: const Text('Upcoming Movies'),
-        backgroundColor: Theme.of(context).colorScheme.primary,
+        title: const Text(
+          'Upcoming Movies',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+        backgroundColor: Colors.black87,
+        elevation: 0,
       ),
       body: BlocBuilder<UpcomingMoviesBloc, UpcomingMoviesState>(
         builder: (context, state) {
           if (state is UpcomingMoviesLoading) {
             return const Center(child: CircularProgressIndicator());
           } else if (state is UpcomingMoviesLoaded) {
-            // Build the content list if data is loaded
-            return _buildContentList(state.data);
+            return _buildMoviesList(state.data);
           } else if (state is UpcomingMoviesError) {
-            // Build the error widget if an error occurred
             return _buildErrorWidget(state.message);
           }
-          // Return an empty container for the initial state or any other unhandled state
+          // Return an empty container or a placeholder for the initial state
           return const SizedBox.shrink();
         },
       ),
     );
   }
 
-  // Widget to build the list of upcoming movies
-  Widget _buildContentList(List<ContentModel> movies) {
-    return RefreshIndicator(
-      onRefresh: () async {
-        // Dispatch the RefreshUpcomingMovies event when the user pulls to refresh
-        context.read<UpcomingMoviesBloc>().add(const RefreshUpcomingMovies());
+  Widget _buildMoviesList(List<ContentModel> movies) {
+    if (movies.isEmpty) {
+      return const Center(
+        child: Text(
+          'No upcoming movies found.',
+          style: TextStyle(color: Colors.white70),
+        ),
+      );
+    }
+    return ListView.builder(
+      padding: const EdgeInsets.all(16.0),
+      itemCount: movies.length,
+      itemBuilder: (context, index) {
+        final movie = movies[index];
+        return _buildMovieListItem(movie);
       },
-      child: ListView.builder(
-        itemCount: movies.length,
-        itemBuilder: (context, index) {
-          final movie = movies[index];
-          return Card(
-            margin: const EdgeInsets.all(8),
-            child: ListTile(
-              leading: Image.network(
-                movie.imageUrl,
-                width: 50,
-                height: 50,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  // Display a placeholder or error icon if the image fails to load
-                  return const Icon(Icons.error);
-                },
-              ),
-              title: Text(movie.title),
-              subtitle: Text(movie.description),
-              trailing: Text(movie.category),
-              onTap: () {
-                // Navigate to a detail page, passing the movie ID
-                Navigator.pushNamed(
-                  context,
-                  '/movie_details', // Assuming a route named '/movie_details' exists
-                  arguments: {'movieId': movie.id},
+    );
+  }
+
+  Widget _buildMovieListItem(ContentModel movie) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(8.0),
+            child: Image.network(
+              movie.imageUrl,
+              width: 100,
+              height: 150,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) {
+                return Container(
+                  width: 100,
+                  height: 150,
+                  color: Colors.grey[800],
+                  child: const Icon(
+                    Icons.movie,
+                    color: Colors.white54,
+                    size: 48,
+                  ),
                 );
               },
             ),
-          );
-        },
+          ),
+          const SizedBox(width: 16.0),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  movie.title,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 8.0),
+                Text(
+                  movie.description,
+                  style: const TextStyle(
+                    color: Colors.white70,
+                    fontSize: 14,
+                  ),
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 8.0),
+                Row(
+                  children: [
+                    const Icon(Icons.star, color: Colors.amber, size: 16),
+                    const SizedBox(width: 4.0),
+                    Text(
+                      movie.rating.toString(),
+                      style: const TextStyle(
+                        color: Colors.white70,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  // Widget to display an error message
   Widget _buildErrorWidget(String message) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Icons.error_outline, size: 64, color: Colors.red),
+          const Icon(Icons.error_outline, color: Colors.red, size: 60),
           const SizedBox(height: 16),
           Text(
-            'Error loading movies: $message',
-            textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.bodyLarge,
+            'Oops! Something went wrong.',
+            style: TextStyle(color: Colors.white, fontSize: 18),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 8),
+          Text(
+            message,
+            style: TextStyle(color: Colors.white70, fontSize: 14),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 20),
           ElevatedButton(
             onPressed: () {
-              // Retry loading movies by dispatching the LoadUpcomingMovies event
+              // Retry loading movies
               context
                   .read<UpcomingMoviesBloc>()
                   .add(const LoadUpcomingMovies());
