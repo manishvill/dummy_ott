@@ -12,6 +12,12 @@ Use these exact templates when generating new features. DO NOT deviate from thes
 
 2. ALWAYS replace "feature_name" and "FeatureName" with actual feature name
 
+3. **"See All" Button Rule**: Only add "See All" button when specifically requested. When adding "See All":
+   - Use `GestureDetector` with red text styling
+   - Position in top-right of header Row
+   - Style: `color: Colors.red, fontSize: 14, fontWeight: FontWeight.w600`
+   - Include TODO comment for navigation implementation
+
 ## Template 1: Event File
 ```dart
 import 'package:equatable/equatable.dart';
